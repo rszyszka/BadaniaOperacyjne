@@ -1,5 +1,7 @@
 package model;
 
+import java.awt.*;
+
 public class TransportProblem {
 
     private int numberOfSuppliers, numberOfRecipients;
@@ -7,8 +9,20 @@ public class TransportProblem {
     private final double unitCost[][];
     private double transportTable[][];
 
+    private Double alpha[];
+    private Double beta[];
+    private double delta[][];
+
+    private OptimumChecker optimumChecker;
+
     private boolean fictitiousSupplier, fictitiousRecipient;
 
+    /**
+     *  Initializes required tables and computes first iteration of transport and delta tables
+     * @param unitDemand one dimensional table of demand for each recipient
+     * @param unitSupply one dimensional table of supply for each supplier
+     * @param unitCost two dimensional table of transport cost from each supplier to each recipient
+     */
     public TransportProblem(double []unitDemand, double []unitSupply, double [][]unitCost) {
         numberOfRecipients = unitDemand.length;
         numberOfSuppliers = unitSupply.length;
@@ -23,26 +37,29 @@ public class TransportProblem {
 
         int n = unitCost.length;
         int m = unitCost[n-1].length;
-        this.unitCost = new double[n][m];
-        for(int i = 0; i<n; i++)
-            for(int j =0; j<m; j++)
-                this.unitCost[i][j] = unitCost[i][j];
 
         fictitiousSupplier = false;
         fictitiousRecipient = false;
         if(demand == supply) {
+            this.unitCost = new double[n][m];
             transportTable = new double[n][m];
         }
         else if (demand > supply) {
             transportTable = new double[n + 1][m];
+            this.unitCost = new double[n + 1][m];
             fictitiousSupplier = true;
             numberOfSuppliers++;
         }
         else {
             transportTable = new double[n][m + 1];
+            this.unitCost = new double[n][m + 1];
             fictitiousRecipient = true;
             numberOfRecipients++;
         }
+
+        for(int i = 0; i<n; i++)
+            for(int j =0; j<m; j++)
+                this.unitCost[i][j] = unitCost[i][j];
 
         for(int i = 0 ; i < n ; i ++){
             for(int j = 0 ; j < m; j ++){
@@ -61,6 +78,58 @@ public class TransportProblem {
                 transportTable[n][i] = unitDemand[i];
             }
         }
+
+        alpha = new Double[numberOfSuppliers];
+        beta = new Double[numberOfRecipients];
+        delta = new double[numberOfSuppliers][numberOfRecipients];
+
+        optimumChecker = computeDelta();
+    }
+
+    /**
+     * Performs next iteration of designating optimal transport cost
+     * @return <code>true</code> if solution is optimal, <code>false</code> otherwise
+     */
+    public boolean performNextStep(){
+
+
+
+        return false;
+    }
+
+    /**
+     * Computes alpha and beta variables and designates delta table
+     * @return OptimumChecker instance which contains information whether solution
+     * is optimal and coordinates of minimum value of optimality indexes
+     * @see OptimumChecker
+     */
+    private OptimumChecker computeDelta(){
+
+        alpha[0] = 0.0;
+        for(int i = 0 ; i < numberOfSuppliers; i ++) {
+            for (int j = 0; j < numberOfRecipients; j++) {
+                if(transportTable[i][j] != 0 ){
+                    if(beta[j] == null && alpha[i] != null)
+                        beta[j] = -unitCost[i][j] - alpha[i];
+                    if(alpha[i] == null && beta[j] != null)
+                        alpha[i] = -unitCost[i][j] - beta[j];
+                }
+            }
+        }
+        OptimumChecker oc = new OptimumChecker();
+        double minValue = 0.0;
+        for(int i = 0 ; i < numberOfSuppliers; i ++) {
+            for (int j = 0; j < numberOfRecipients; j++) {
+                delta[i][j] = unitCost[i][j] + alpha[i] + beta[j];
+                if(delta[i][j] < minValue){
+                    oc.isOptimal = false;
+                    oc.minimumValueCoordinates.y = i;
+                    oc.minimumValueCoordinates.x = j;
+                    minValue = delta[i][j];
+                }
+            }
+        }
+        return oc;
     }
 
     public boolean isFictitiousSupplier() {
@@ -85,5 +154,31 @@ public class TransportProblem {
 
     public double[][] getTransportTable() {
         return transportTable;
+    }
+
+    public Double[] getAlpha() {
+        return alpha;
+    }
+
+    public Double[] getBeta() {
+        return beta;
+    }
+
+    public double[][] getDelta() {
+        return delta;
+    }
+
+    public boolean isOptimal(){
+        return optimumChecker.isOptimal;
+    }
+}
+
+class OptimumChecker{
+    boolean isOptimal;
+    Point minimumValueCoordinates;
+
+    OptimumChecker(){
+        isOptimal = true;
+        minimumValueCoordinates = new Point(0,0);
     }
 }

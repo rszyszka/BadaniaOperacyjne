@@ -17,6 +17,22 @@ public class ConsoleMain {
 
         TransportProblem transportProblem = new TransportProblem(unitDemand, unitSupply, unitCost);
 
+        System.out.println("Alfa:");
+        for( int i = 0 ; i < transportProblem.getAlpha().length; i ++) {
+            System.out.print(transportProblem.getAlpha()[i]+" ");
+        }
+        System.out.println("\nBeta:");
+        for( int i = 0 ; i < transportProblem.getBeta().length; i ++) {
+            System.out.print(transportProblem.getBeta()[i]+" ");
+        }
+        System.out.println("\nDelta:");
+        for( int i = 0 ; i < transportProblem.getNumberOfSuppliers(); i ++){
+            for( int j = 0 ; j < transportProblem.getNumberOfRecipients(); j ++){
+                System.out.print(transportProblem.getDelta()[i][j]+" ");
+            }
+            System.out.println();
+        }
+        System.out.println("Transport:");
         for( int i = 0 ; i < transportProblem.getNumberOfSuppliers(); i ++){
             for( int j = 0 ; j < transportProblem.getNumberOfRecipients(); j ++){
                 System.out.print(transportProblem.getTransportTable()[i][j]+" ");
