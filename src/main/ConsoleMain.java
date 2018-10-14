@@ -16,6 +16,7 @@ public class ConsoleMain {
         };
 
         TransportProblem transportProblem = new TransportProblem(unitDemand, unitSupply, unitCost);
+        transportProblem.performNextStep();
 
         System.out.println("Alfa:");
         for( int i = 0 ; i < transportProblem.getAlpha().length; i ++) {

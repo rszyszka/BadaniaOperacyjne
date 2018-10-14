@@ -92,7 +92,25 @@ public class TransportProblem {
      */
     public boolean performNextStep(){
 
+        int y_h = optimumChecker.minimumValueCoordinates.y;
+        int x_h = optimumChecker.minimumValueCoordinates.x;
+        int x = x_h;
+        int y = y_h;
 
+        boolean finding = true;
+        for(int i = 0 ; i < numberOfRecipients && finding; i ++){
+            if(delta[y_h][i] == 0.0){
+                for(int j =0; j < numberOfSuppliers && finding; j++){
+                    if(delta[j][i] == 0.0 && delta[j][x_h] == 0.0){
+                        x = i;
+                        y = j;
+                        finding = false;
+                    }
+                }
+            }
+        }
+
+        System.out.println("y:"+y+" x:"+x);
 
         return false;
     }
