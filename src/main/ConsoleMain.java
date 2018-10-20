@@ -6,26 +6,28 @@ public class ConsoleMain {
 
     public static void main(String[] args) {
 
-        double[] unitDemand = {20, 40, 90};
-        double[] unitSupply = {50, 70, 30};
+        double[] unitDemand = {20, 40, 40};
+        double[] unitSupply = {32, 19, 27};
 
         double[][] unitCost = {
-                {3, 5, 7}
-                , {12, 10, 9}
-                , {13, 3, 9}
-        };
+                {1, 4, 3}
+                , {2, 5, 1}
+                , {2, 6, 5}
+    };
 
+        int stepCounter = 1;
         TransportProblem transportProblem = new TransportProblem(unitDemand, unitSupply, unitCost);
-        System.out.println("Step1: " + transportProblem.isOptimal());
+        boolean isOptimal = transportProblem.isOptimal();
+        System.out.println("Step"+stepCounter+": ");
         printSolution(transportProblem);
-        boolean test = transportProblem.performNextStep();
-        System.out.println("Step2: " + test);
-        printSolution(transportProblem);
-        test = transportProblem.performNextStep();
-        System.out.println("Step3: " + test);
-        printSolution(transportProblem);
-        System.out.println();
-        System.out.println("Total cost: " + transportProblem.computeTotalCost());
+
+        while(!isOptimal) {
+            stepCounter++;
+            isOptimal = transportProblem.performNextStep();
+            System.out.println("Step"+stepCounter+": ");
+            printSolution(transportProblem);
+            System.out.println("Total cost: " + transportProblem.computeTotalCost());
+        }
     }
 
     private static void printSolution(TransportProblem transportProblem) {
@@ -37,17 +39,17 @@ public class ConsoleMain {
         for (int i = 0; i < transportProblem.getBeta().length; i++) {
             System.out.print(transportProblem.getBeta()[i] + " ");
         }
-        System.out.println("\nDelta:");
-        for (int i = 0; i < transportProblem.getNumberOfSuppliers(); i++) {
-            for (int j = 0; j < transportProblem.getNumberOfRecipients(); j++) {
-                System.out.print(transportProblem.getDelta()[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println("Transport:");
+        System.out.println("\nTransport:");
         for (int i = 0; i < transportProblem.getNumberOfSuppliers(); i++) {
             for (int j = 0; j < transportProblem.getNumberOfRecipients(); j++) {
                 System.out.print(transportProblem.getTransportTable()[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println("Delta:");
+        for (int i = 0; i < transportProblem.getNumberOfSuppliers(); i++) {
+            for (int j = 0; j < transportProblem.getNumberOfRecipients(); j++) {
+                System.out.print(transportProblem.getDelta()[i][j] + " ");
             }
             System.out.println();
         }

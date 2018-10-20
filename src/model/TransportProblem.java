@@ -1,6 +1,8 @@
 package model;
 
 import java.awt.Point;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public class TransportProblem {
 
@@ -8,8 +10,8 @@ public class TransportProblem {
     private int numberOfSuppliers, numberOfRecipients;
     private double transportTable[][];
 
-    private Double alpha[];
-    private Double beta[];
+    private double alpha[];
+    private double beta[];
     private double delta[][];
 
     private OptimumChecker optimumChecker;
@@ -61,24 +63,30 @@ public class TransportProblem {
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                transportTable[i][j] = Math.min(unitDemand[j], unitSupply[i]);
-                unitDemand[j] -= transportTable[i][j];
-                unitSupply[i] -= transportTable[i][j];
+                double min = Math.min(unitDemand[j], unitSupply[i]);
+                if(min == 0.0) {
+                    min = Double.NaN;
+                }
+                else{
+                    unitDemand[j] -= min;
+                    unitSupply[i] -= min;
+                }
+                transportTable[i][j] = min;
             }
         }
         if (fictitiousRecipient) {
             for (int i = 0; i < numberOfSuppliers; i++) {
-                transportTable[i][m] = unitSupply[i];
+                transportTable[i][m] = unitSupply[i] == 0.0 ? Double.NaN : unitSupply[i];
             }
         }
         if (fictitiousSupplier) {
             for (int i = 0; i < numberOfRecipients; i++) {
-                transportTable[n][i] = unitDemand[i];
+                transportTable[n][i] = unitDemand[i] == 0.0 ? Double.NaN : unitDemand[i];
             }
         }
 
-        alpha = new Double[numberOfSuppliers];
-        beta = new Double[numberOfRecipients];
+        alpha = new double[numberOfSuppliers];
+        beta = new double[numberOfRecipients];
         delta = new double[numberOfSuppliers][numberOfRecipients];
 
         optimumChecker = computeDelta();
@@ -93,29 +101,28 @@ public class TransportProblem {
 
         int y_h = optimumChecker.minimumValueCoordinates.y;
         int x_h = optimumChecker.minimumValueCoordinates.x;
-        int x = x_h;
-        int y = y_h;
 
-        boolean finding = true;
-        for (int i = 0; i < numberOfRecipients && finding; i++) {
-            if (delta[y_h][i] == 0.0) {
-                for (int j = 0; j < numberOfSuppliers && finding; j++) {
-                    if (delta[j][i] == 0.0 && delta[j][x_h] == 0.0) {
-                        x = i;
-                        y = j;
-                        finding = false;
-                    }
-                }
+        Stack<Point> stack = findCycle(x_h,y_h);
+        ArrayList<Point> list = new ArrayList<>(stack);
+        double minValue = Double.POSITIVE_INFINITY;
+        for(int i = 0 ; i < list.size(); i +=2){
+            Point p = list.get(i);
+            minValue = Math.min(transportTable[p.y][p.x], minValue);
+        }
+        double value;
+        transportTable[y_h][x_h] = minValue;
+        int size = list.size()-1;
+        for(int i = 0; i < size ; i++){
+            Point p  = list.get(i);
+            if(i % 2 == 0){
+                value = transportTable[p.y][p.x] - minValue;
+                transportTable[p.y][p.x] = value == 0.0 ? Double.NaN : value;
+            }else{
+                value = transportTable[p.y][p.x] + minValue;
+                transportTable[p.y][p.x] = Double.isNaN(value) ? minValue : value;
             }
         }
-        double minValue = Math.min(transportTable[y_h][x], transportTable[y][x_h]);
-        transportTable[y_h][x] -= minValue;
-        transportTable[y][x_h] -= minValue;
-        transportTable[y_h][x_h] += minValue;
-        transportTable[y][x] += minValue;
-
         optimumChecker = computeDelta();
-
         return isOptimal();
     }
 
@@ -127,8 +134,11 @@ public class TransportProblem {
     public double computeTotalCost() {
         double totalCost = 0.0;
         for (int i = 0; i < numberOfSuppliers; i++)
-            for (int j = 0; j < numberOfRecipients; j++)
+            for (int j = 0; j < numberOfRecipients; j++) {
+                if (Double.isNaN(transportTable[i][j]))
+                    continue;
                 totalCost += transportTable[i][j] * unitCost[i][j];
+            }
         return totalCost;
     }
 
@@ -148,10 +158,10 @@ public class TransportProblem {
 
         alpha[0] = 0.0;
 
-        for (int k = 0; k < 2; k++) {
+        for (int k = 0; k < 10; k++) {
             for (int i = 0; i < numberOfSuppliers; i++) {
                 for (int j = 0; j < numberOfRecipients; j++) {
-                    if (transportTable[i][j] != 0) {
+                    if (!Double.isNaN(transportTable[i][j])) {
                         if (Double.isNaN(beta[j]) && !Double.isNaN(alpha[i]))
                             beta[j] = -unitCost[i][j] - alpha[i];
                         if (Double.isNaN(alpha[i]) && !Double.isNaN(beta[j]))
@@ -171,9 +181,93 @@ public class TransportProblem {
                     oc.minimumValueCoordinates.x = j;
                     minValue = delta[i][j];
                 }
+                if(!Double.isNaN(transportTable[i][j]))
+                    delta[i][j] = Double.NaN;
             }
         }
         return oc;
+    }
+
+    /**
+     * Finds the shortest cycle for given delta cell coordinates
+     * @param x x coordinate of negative delta cell
+     * @param y y coordinate of negative delta cell
+     * @return Stack which contains coordinates of cells in cycle
+     */
+    private Stack<Point> findCycle(int x, int y){
+        LinkedList<Stack<Point>> queue = new LinkedList<>();
+        TreeSet<Point> set = new TreeSet<>(new DistanceComparator(x,y));
+
+        for(int i = 0; i < numberOfSuppliers; i++)
+            if(Double.isNaN(delta[i][x]))
+                set.add(new Point(x,i));
+
+        for(Point p : set){
+            Stack<Point> s = new Stack<>();
+            s.push(p);
+            queue.add(s);
+        }
+
+        int numberOfStacks = queue.size();
+        for(int k = 0; !queue.isEmpty(); k++){
+            if(k % 2 == 0){
+                for(int i=0; i < numberOfStacks; i++) {
+                    Stack<Point> stack = queue.poll();
+                    Point p = stack.peek();
+                    boolean newStack = false;
+                    for(int j = 0; j< numberOfRecipients;j++){
+                        if(p.y == y && j == x){
+                            if(newStack)
+                                stack.pop();
+                            stack.push(new Point(x,y));
+                            return stack;
+                        }
+                        if(p.x != j && Double.isNaN(delta[p.y][j])){
+                            if(!newStack) {
+                                stack.push(new Point(j, p.y));
+                                queue.add(stack);
+                                newStack = true;
+                            }
+                            else{
+                                Stack<Point> stack2 = (Stack<Point>) stack.clone();
+                                stack2.pop();
+                                stack2.push(new Point(j,p.y));
+                                queue.add(stack2);
+                            }
+                        }
+                    }
+                }
+            }else{
+                for(int i=0; i < numberOfStacks; i++) {
+                    Stack<Point> stack = queue.poll();
+                    Point p = stack.peek();
+                    boolean newStack = false;
+                    for(int j = 0; j< numberOfSuppliers;j++){
+                        if(p.x == x && j == y){
+                            if(newStack)
+                                stack.pop();
+                            stack.push(new Point(x,y));
+                            return stack;
+                        }
+                        if(p.y !=j && Double.isNaN(delta[j][p.x])){
+                            if(!newStack) {
+                                stack.push(new Point(p.x, j));
+                                queue.add(stack);
+                                newStack = true;
+                            }
+                            else{
+                                Stack<Point> stack2 = (Stack<Point>) stack.clone();
+                                stack2.pop();
+                                stack2.push(new Point(p.x,j));
+                                queue.add(stack2);
+                            }
+                        }
+                    }
+                }
+            }
+            numberOfStacks = queue.size();
+        }
+    return null;
     }
 
     public boolean isFictitiousSupplier() {
@@ -200,11 +294,11 @@ public class TransportProblem {
         return transportTable;
     }
 
-    public Double[] getAlpha() {
+    public double[] getAlpha() {
         return alpha;
     }
 
-    public Double[] getBeta() {
+    public double[] getBeta() {
         return beta;
     }
 
