@@ -3,7 +3,7 @@ package model;
 import java.awt.Point;
 import java.util.Comparator;
 
-public class DistanceComparator implements Comparator<Point> {
+class DistanceComparator implements Comparator<Point> {
 
     private int x,y;
 

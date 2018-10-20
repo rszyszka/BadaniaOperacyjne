@@ -1,5 +1,6 @@
 package main;
 
+import model.CycleNotFoundException;
 import model.TransportProblem;
 
 public class ConsoleMain {
@@ -23,7 +24,12 @@ public class ConsoleMain {
 
         while(!isOptimal) {
             stepCounter++;
-            isOptimal = transportProblem.performNextStep();
+            try {
+                isOptimal = transportProblem.performNextStep();
+            }catch (CycleNotFoundException ex){
+                System.out.println(ex.getMessage());
+                break;
+            }
             System.out.println("Step"+stepCounter+": ");
             printSolution(transportProblem);
             System.out.println("Total cost: " + transportProblem.computeTotalCost());
@@ -31,7 +37,7 @@ public class ConsoleMain {
     }
 
     private static void printSolution(TransportProblem transportProblem) {
-        System.out.println("Alfa:");
+        System.out.println("Alpha:");
         for (int i = 0; i < transportProblem.getAlpha().length; i++) {
             System.out.print(transportProblem.getAlpha()[i] + " ");
         }

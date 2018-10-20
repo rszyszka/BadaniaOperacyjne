@@ -2,7 +2,6 @@ package model;
 
 import java.awt.Point;
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
 
 public class TransportProblem {
 
@@ -20,7 +19,6 @@ public class TransportProblem {
 
     /**
      * Initializes required tables and computes first iteration of transport and delta tables
-     *
      * @param unitDemand one dimensional table of demand for each recipient
      * @param unitSupply one dimensional table of supply for each supplier
      * @param unitCost   two dimensional table of transport cost from each supplier to each recipient
@@ -94,15 +92,17 @@ public class TransportProblem {
 
     /**
      * Performs next iteration of designating optimal transport cost
-     *
      * @return <code>true</code> if solution is optimal, <code>false</code> otherwise
+     * @throws CycleNotFoundException when cycle could not be found
      */
-    public boolean performNextStep() {
+    public boolean performNextStep() throws CycleNotFoundException {
 
         int y_h = optimumChecker.minimumValueCoordinates.y;
         int x_h = optimumChecker.minimumValueCoordinates.x;
 
         Stack<Point> stack = findCycle(x_h,y_h);
+        if(stack == null)
+            throw new CycleNotFoundException();
         ArrayList<Point> list = new ArrayList<>(stack);
         double minValue = Double.POSITIVE_INFINITY;
         for(int i = 0 ; i < list.size(); i +=2){
@@ -128,7 +128,6 @@ public class TransportProblem {
 
     /**
      * Computes total cost of transport
-     *
      * @return value of total cost
      */
     public double computeTotalCost() {
@@ -144,7 +143,6 @@ public class TransportProblem {
 
     /**
      * Computes alpha and beta variables and designates delta table
-     *
      * @return OptimumChecker instance which contains information whether solution
      * is optimal and coordinates of minimum value of optimality indexes
      * @see OptimumChecker
@@ -190,9 +188,10 @@ public class TransportProblem {
 
     /**
      * Finds the shortest cycle for given delta cell coordinates
-     * @param x x coordinate of negative delta cell
-     * @param y y coordinate of negative delta cell
-     * @return Stack which contains coordinates of cells in cycle
+     * @param x <code>x</code> coordinate of negative delta cell
+     * @param y <code>y</code> coordinate of negative delta cell
+     * @return <code>Stack</code> which contains coordinates of cells in cycle,
+     * <code>null</code> when cycle couldn't be found
      */
     private Stack<Point> findCycle(int x, int y){
         LinkedList<Stack<Point>> queue = new LinkedList<>();
