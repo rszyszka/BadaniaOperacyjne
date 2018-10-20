@@ -7,13 +7,14 @@ public class ConsoleMain {
 
     public static void main(String[] args) {
 
-        double[] unitDemand = {20, 40, 40};
-        double[] unitSupply = {32, 19, 27};
+        double[] unitDemand = {20, 40, 80,50};
+        double[] unitSupply = {30, 40, 60,60};
 
         double[][] unitCost = {
-                {1, 4, 3}
-                , {2, 5, 1}
-                , {2, 6, 5}
+                {1, 4, 3 ,8}
+                , {2, 5, 1 ,2}
+                , {2, 6, 5, 9}
+                ,{5,8,6,1}
     };
 
         int stepCounter = 1;
