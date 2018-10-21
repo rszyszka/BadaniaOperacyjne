@@ -11,23 +11,23 @@ public class ViewController {
 
     // ChoiceBox
     @FXML
-    ChoiceBox<String> recipentsNumber;
+    ChoiceBox<String> recipientsNumber;
 
     @FXML
     ChoiceBox<String> suppliersNumber;
 
-    // Recipents
+    // Recipients
     @FXML
-    TextField recipent1;
+    TextField recipient1;
 
     @FXML
-    TextField recipent2;
+    TextField recipient2;
 
     @FXML
-    TextField recipent3;
+    TextField recipient3;
 
     @FXML
-    TextField recipent4;
+    TextField recipient4;
 
 
     // Suppliers
@@ -99,16 +99,16 @@ public class ViewController {
     @FXML
     void initialize() {
 
-        recipentsNumber.getItems().addAll("2", "3", "4");
+        recipientsNumber.getItems().addAll("2", "3", "4");
         suppliersNumber.getItems().addAll("2", "3", "4");
 
-        recipentsNumber.setValue("4");
+        recipientsNumber.setValue("4");
         suppliersNumber.setValue("4");
 
-        recipent1.setText("20");
-        recipent2.setText("40");
-        recipent3.setText("80");
-        recipent4.setText("50");
+        recipient1.setText("20");
+        recipient2.setText("40");
+        recipient3.setText("80");
+        recipient4.setText("50");
 
         supplier1.setText("30");
         supplier2.setText("40");
@@ -146,16 +146,16 @@ public class ViewController {
 
         solutionTextArea.clear();
 
-        int recipentsNum = Integer.parseInt(recipentsNumber.getValue());
+        int recipientsNum = Integer.parseInt(recipientsNumber.getValue());
         int suppliersNum = Integer.parseInt(suppliersNumber.getValue());
 
         int stepCounter = 1;
 
-        double[] recipents = {
-                Integer.parseInt(recipent1.getText()),
-                Integer.parseInt(recipent2.getText()),
-                Integer.parseInt(recipent3.getText()),
-                Integer.parseInt(recipent4.getText())
+        double[] recipients = {
+                Integer.parseInt(recipient1.getText()),
+                Integer.parseInt(recipient2.getText()),
+                Integer.parseInt(recipient3.getText()),
+                Integer.parseInt(recipient4.getText())
         };
 
         double[] suppliers = {
@@ -193,9 +193,9 @@ public class ViewController {
         };
 
 
-        double[] unitDemand = new double[recipentsNum];
-        for (int i = 0; i < recipentsNum; i++) {
-            unitDemand[i] = recipents[i];
+        double[] unitDemand = new double[recipientsNum];
+        for (int i = 0; i < recipientsNum; i++) {
+            unitDemand[i] = recipients[i];
             System.out.print(unitDemand[i] + " ");
         }
 
@@ -209,9 +209,9 @@ public class ViewController {
 
         System.out.println();
 
-        double[][] unitCost = new double[suppliersNum][recipentsNum];
+        double[][] unitCost = new double[suppliersNum][recipientsNum];
         for (int i = 0; i < suppliersNum; i++) {
-            for (int j = 0; j < recipentsNum; j++) {
+            for (int j = 0; j < recipientsNum; j++) {
                 unitCost[i][j] = unit[i][j];
                 System.out.print(unitCost[i][j] + " ");
             }
@@ -219,17 +219,17 @@ public class ViewController {
         }
 
         TransportProblem transportProblem = new TransportProblem(unitDemand, unitSupply, unitCost);
-        boolean isOptimal;
-        do {
+        printSolution(transportProblem,stepCounter++);
+        boolean isOptimal = transportProblem.isOptimal();
+        while (!isOptimal) {
             try {
                 isOptimal = transportProblem.performNextStep();
             } catch (CycleNotFoundException ex) {
                 solutionTextArea.appendText(ex.getMessage());
                 break;
             }
-            printSolution(transportProblem, stepCounter);
-            stepCounter++;
-        } while (!isOptimal);
+            printSolution(transportProblem, stepCounter++);
+        }
     }
 
     private void printSolution(TransportProblem transportProblem, int stepCounter) {

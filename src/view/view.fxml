@@ -1,56 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="489.0" prefWidth="803.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ViewController">
-    <children>
-        <Label layoutX="273.0" layoutY="14.0" text="Program rozwiązujący zagadnienie transportowe" />
+<AnchorPane prefHeight="489.0" prefWidth="803.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.ViewController">
+    <Label layoutX="273.0" layoutY="14.0" text="Program rozwiązujący zagadnienie transportowe"/>
 
-        <Label layoutX="23.0" layoutY="62.0" text="Wybierz liczbe odbiorców" />
-        <ChoiceBox fx:id="recipentsNumber" layoutX="23.0" layoutY="79.0" prefWidth="150.0" />
+    <Label layoutX="23.0" layoutY="62.0" text="Wybierz liczbe odbiorców"/>
+    <ChoiceBox fx:id="recipientsNumber" layoutX="23.0" layoutY="79.0" prefWidth="150.0"/>
 
-        <Label layoutX="23.0" layoutY="117.0" text="Wybierz liczbe dostawców" />
-        <ChoiceBox fx:id="suppliersNumber" layoutX="23.0" layoutY="134.0" prefWidth="150.0" />
+    <Label layoutX="23.0" layoutY="117.0" text="Wybierz liczbe dostawców"/>
+    <ChoiceBox fx:id="suppliersNumber" layoutX="23.0" layoutY="134.0" prefWidth="150.0"/>
 
-        <Label layoutX="126.0" layoutY="179.0" text="Popyt" />
-        <TextField fx:id="recipent1" layoutX="24.0" layoutY="202.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="recipent2" layoutX="85.0" layoutY="202.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="recipent3" layoutX="149.0" layoutY="202.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="recipent4" layoutX="211.0" layoutY="202.0" prefHeight="25.0" prefWidth="49.0" />
+    <Label layoutX="126.0" layoutY="179.0" text="Popyt"/>
+    <TextField fx:id="recipient1" layoutX="24.0" layoutY="202.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="recipient2" layoutX="85.0" layoutY="202.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="recipient3" layoutX="149.0" layoutY="202.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="recipient4" layoutX="211.0" layoutY="202.0" prefHeight="25.0" prefWidth="49.0"/>
 
-        <Label layoutX="125.0" layoutY="245.0" text="Podaż" />
-        <TextField fx:id="supplier1" layoutX="23.0" layoutY="269.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="supplier2" layoutX="85.0" layoutY="269.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="supplier3" layoutX="149.0" layoutY="269.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="supplier4" layoutX="211.0" layoutY="269.0" prefHeight="25.0" prefWidth="49.0" />
+    <Label layoutX="125.0" layoutY="245.0" text="Podaż"/>
+    <TextField fx:id="supplier1" layoutX="23.0" layoutY="269.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="supplier2" layoutX="85.0" layoutY="269.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="supplier3" layoutX="149.0" layoutY="269.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="supplier4" layoutX="211.0" layoutY="269.0" prefHeight="25.0" prefWidth="49.0"/>
 
-        <Label layoutX="92.0" layoutY="316.0" text="Koszt jednostkowy" />
-        <TextField fx:id="unitCost1" layoutX="23.0" layoutY="342.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost2" layoutX="85.0" layoutY="342.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost3" layoutX="148.0" layoutY="342.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost4" layoutX="211.0" layoutY="342.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost5" layoutX="23.0" layoutY="375.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost6" layoutX="85.0" layoutY="375.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost7" layoutX="148.0" layoutY="375.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost8" layoutX="211.0" layoutY="375.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost9" layoutX="23.0" layoutY="408.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost10" layoutX="85.0" layoutY="408.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost11" layoutX="148.0" layoutY="408.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost12" layoutX="211.0" layoutY="408.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost13" layoutX="23.0" layoutY="443.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost14" layoutX="85.0" layoutY="443.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost15" layoutX="148.0" layoutY="443.0" prefHeight="25.0" prefWidth="49.0" />
-        <TextField fx:id="unitCost16" layoutX="211.0" layoutY="443.0" prefHeight="25.0" prefWidth="49.0" />
+    <Label layoutX="92.0" layoutY="316.0" text="Koszt jednostkowy"/>
+    <TextField fx:id="unitCost1" layoutX="23.0" layoutY="342.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost2" layoutX="85.0" layoutY="342.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost3" layoutX="148.0" layoutY="342.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost4" layoutX="211.0" layoutY="342.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost5" layoutX="23.0" layoutY="375.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost6" layoutX="85.0" layoutY="375.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost7" layoutX="148.0" layoutY="375.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost8" layoutX="211.0" layoutY="375.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost9" layoutX="23.0" layoutY="408.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost10" layoutX="85.0" layoutY="408.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost11" layoutX="148.0" layoutY="408.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost12" layoutX="211.0" layoutY="408.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost13" layoutX="23.0" layoutY="443.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost14" layoutX="85.0" layoutY="443.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost15" layoutX="148.0" layoutY="443.0" prefHeight="25.0" prefWidth="49.0"/>
+    <TextField fx:id="unitCost16" layoutX="211.0" layoutY="443.0" prefHeight="25.0" prefWidth="49.0"/>
 
-        <Button layoutX="279.0" layoutY="408.0" mnemonicParsing="false" onAction="#findSolutionAction" prefHeight="25.0" prefWidth="61.0" text="Znajdź " />
-        <TextArea fx:id="solutionTextArea" layoutX="377.0" layoutY="89.0" prefHeight="379.0" prefWidth="387.0" />
-      <Label layoutX="553.0" layoutY="70.0" text="Wyniki" />
+    <Button layoutX="279.0" layoutY="408.0" mnemonicParsing="false" onAction="#findSolutionAction" prefHeight="25.0"
+            prefWidth="61.0" text="Znajdź "/>
+    <TextArea fx:id="solutionTextArea" layoutX="377.0" layoutY="89.0" prefHeight="379.0" prefWidth="387.0"/>
+    <Label layoutX="553.0" layoutY="70.0" text="Wyniki"/>
 
-
-
-
-
-    </children>
 </AnchorPane>
