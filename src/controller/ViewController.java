@@ -299,26 +299,18 @@ public class ViewController {
         double[] unitDemand = new double[recipientsNum];
         for (int i = 0; i < recipientsNum; i++) {
             unitDemand[i] = recipients[i];
-            System.out.print(unitDemand[i] + " ");
         }
-
-        System.out.println();
 
         double[] unitSupply = new double[suppliersNum];
         for (int i = 0; i < suppliersNum; i++) {
             unitSupply[i] = suppliers[i];
-            System.out.print(unitSupply[i] + " ");
         }
-
-        System.out.println();
 
         double[][] unitCost = new double[suppliersNum][recipientsNum];
         for (int i = 0; i < suppliersNum; i++) {
             for (int j = 0; j < recipientsNum; j++) {
                 unitCost[i][j] = unit[i][j];
-                System.out.print(unitCost[i][j] + " ");
             }
-            System.out.println();
         }
 
         try {
