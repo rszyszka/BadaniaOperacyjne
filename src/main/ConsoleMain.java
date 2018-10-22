@@ -1,6 +1,6 @@
 package main;
 
-import model.CycleNotFoundException;
+import model.UnsolvableException;
 import model.TransportProblem;
 
 public class ConsoleMain {
@@ -18,22 +18,21 @@ public class ConsoleMain {
     };
 
         int stepCounter = 1;
-        TransportProblem transportProblem = new TransportProblem(unitDemand, unitSupply, unitCost);
-        boolean isOptimal = transportProblem.isOptimal();
-        System.out.println("Step"+stepCounter+": ");
-        printSolution(transportProblem);
-
-        while(!isOptimal) {
-            stepCounter++;
-            try {
-                isOptimal = transportProblem.performNextStep();
-            }catch (CycleNotFoundException ex){
-                System.out.println(ex.getMessage());
-                break;
-            }
-            System.out.println("Step"+stepCounter+": ");
+        try {
+            TransportProblem transportProblem = new TransportProblem(unitDemand, unitSupply, unitCost);
+            boolean isOptimal = transportProblem.isOptimal();
+            System.out.println("Step" + stepCounter + ": ");
             printSolution(transportProblem);
-            System.out.println("Total cost: " + transportProblem.computeTotalCost());
+
+            while (!isOptimal) {
+                stepCounter++;
+                isOptimal = transportProblem.performNextStep();
+                System.out.println("Step" + stepCounter + ": ");
+                printSolution(transportProblem);
+                System.out.println("Total cost: " + transportProblem.computeTotalCost());
+            }
+        }catch (UnsolvableException ex){
+            System.out.println(ex.getMessage());
         }
     }
 

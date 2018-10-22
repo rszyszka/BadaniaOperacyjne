@@ -15,15 +15,14 @@ public class TransportProblem {
 
     private OptimumChecker optimumChecker;
 
-    private boolean fictitiousSupplier, fictitiousRecipient;
-
     /**
      * Initializes required tables and computes first iteration of transport and delta tables
      * @param unitDemand one dimensional table of demand for each recipient
      * @param unitSupply one dimensional table of supply for each supplier
      * @param unitCost   two dimensional table of transport cost from each supplier to each recipient
+     * @throws UnsolvableException when alpha or beta parameters could not be designated
      */
-    public TransportProblem(double[] unitDemand, double[] unitSupply, double[][] unitCost) {
+    public TransportProblem(double[] unitDemand, double[] unitSupply, double[][] unitCost) throws UnsolvableException {
         numberOfRecipients = unitDemand.length;
         numberOfSuppliers = unitSupply.length;
 
@@ -38,8 +37,8 @@ public class TransportProblem {
         int n = unitCost.length;
         int m = unitCost[n - 1].length;
 
-        fictitiousSupplier = false;
-        fictitiousRecipient = false;
+        boolean fictitiousSupplier = false;
+        boolean fictitiousRecipient = false;
         if (demand == supply) {
             this.unitCost = new double[n][m];
             transportTable = new double[n][m];
@@ -93,16 +92,16 @@ public class TransportProblem {
     /**
      * Performs next iteration of designating optimal transport cost
      * @return <code>true</code> if solution is optimal, <code>false</code> otherwise
-     * @throws CycleNotFoundException when cycle could not be found
+     * @throws UnsolvableException when cycle could not be found or alpha or beta parameters could not be designated
      */
-    public boolean performNextStep() throws CycleNotFoundException {
+    public boolean performNextStep() throws UnsolvableException {
 
         int y_h = optimumChecker.minimumValueCoordinates.y;
         int x_h = optimumChecker.minimumValueCoordinates.x;
 
         Stack<Point> stack = findCycle(x_h,y_h);
         if(stack == null)
-            throw new CycleNotFoundException();
+            throw new UnsolvableException("Cycle could not be found!");
         ArrayList<Point> list = new ArrayList<>(stack);
         double minValue = Double.POSITIVE_INFINITY;
         for(int i = 0 ; i < list.size(); i +=2){
@@ -146,8 +145,9 @@ public class TransportProblem {
      * @return OptimumChecker instance which contains information whether solution
      * is optimal and coordinates of minimum value of optimality indexes
      * @see OptimumChecker
+     * @throws UnsolvableException when alpha or beta parameters could not be designated
      */
-    private OptimumChecker computeDelta() {
+    private OptimumChecker computeDelta() throws UnsolvableException {
 
         for (int i = 1; i < alpha.length; i++)
             alpha[i] = Double.NaN;
@@ -156,7 +156,7 @@ public class TransportProblem {
 
         alpha[0] = 0.0;
 
-        for (int k = 0; k < 10; k++) {
+        for (int k = 0; k < 20; k++) {
             for (int i = 0; i < numberOfSuppliers; i++) {
                 for (int j = 0; j < numberOfRecipients; j++) {
                     if (!Double.isNaN(transportTable[i][j])) {
@@ -167,6 +167,14 @@ public class TransportProblem {
                     }
                 }
             }
+        }
+        for(int i = 0; i < numberOfSuppliers;i++){
+            if (Double.isNaN(alpha[i]))
+                throw new UnsolvableException("Alpha parameters could not be designated!");
+        }
+        for(int i = 0; i < numberOfRecipients;i++){
+            if (Double.isNaN(beta[i]))
+                throw new UnsolvableException("Beta parameters could not be designated!");
         }
         OptimumChecker oc = new OptimumChecker();
         double minValue = 0.0;
@@ -269,24 +277,12 @@ public class TransportProblem {
     return null;
     }
 
-    public boolean isFictitiousSupplier() {
-        return fictitiousSupplier;
-    }
-
-    public boolean isFictitiousRecipient() {
-        return fictitiousRecipient;
-    }
-
     public int getNumberOfSuppliers() {
         return numberOfSuppliers;
     }
 
     public int getNumberOfRecipients() {
         return numberOfRecipients;
-    }
-
-    public double[][] getUnitCost() {
-        return unitCost;
     }
 
     public double[][] getTransportTable() {

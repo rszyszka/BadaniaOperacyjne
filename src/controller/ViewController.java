@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import model.CycleNotFoundException;
+import model.UnsolvableException;
 import model.TransportProblem;
 
 public class ViewController {
@@ -140,6 +140,109 @@ public class ViewController {
         unitCost15.setText("6");
         unitCost16.setText("1");
 
+        recipientsNumber.valueProperty().addListener((observable, oldValue, newValue) -> {
+            switch (newValue){
+                case "2":
+                    recipient3.setVisible(false);
+                    recipient4.setVisible(false);
+                    unitCost3.setVisible(false);
+                    unitCost4.setVisible(false);
+                    unitCost7.setVisible(false);
+                    unitCost8.setVisible(false);
+                    unitCost11.setVisible(false);
+                    unitCost12.setVisible(false);
+                    unitCost15.setVisible(false);
+                    unitCost16.setVisible(false);
+                    break;
+                case "3":
+                    recipient3.setVisible(true);
+                    recipient4.setVisible(false);
+                    unitCost3.setVisible(true);
+                    unitCost4.setVisible(false);
+                    unitCost7.setVisible(true);
+                    unitCost8.setVisible(false);
+                    if(suppliersNumber.getValue().equals("3"))
+                        unitCost11.setVisible(true);
+                    unitCost12.setVisible(false);
+                    if(suppliersNumber.getValue().equals("4")) {
+                        unitCost11.setVisible(true);
+                        unitCost15.setVisible(true);
+                    }
+                    unitCost16.setVisible(false);
+                    break;
+                case "4":
+                    recipient3.setVisible(true);
+                    recipient4.setVisible(true);
+                    unitCost3.setVisible(true);
+                    unitCost4.setVisible(true);
+                    unitCost7.setVisible(true);
+                    unitCost8.setVisible(true);
+                    if(suppliersNumber.getValue().equals("3")) {
+                        unitCost11.setVisible(true);
+                        unitCost15.setVisible(true);
+                    }
+                    else if(suppliersNumber.getValue().equals("4")) {
+                        unitCost11.setVisible(true);
+                        unitCost12.setVisible(true);
+                        unitCost15.setVisible(true);
+                        unitCost16.setVisible(true);
+                    }
+                    break;
+            }
+        });
+
+        suppliersNumber.valueProperty().addListener((observable, oldValue, newValue) -> {
+            switch (newValue){
+                case "2":
+                    supplier3.setVisible(false);
+                    supplier4.setVisible(false);
+                    unitCost9.setVisible(false);
+                    unitCost10.setVisible(false);
+                    unitCost11.setVisible(false);
+                    unitCost12.setVisible(false);
+                    unitCost13.setVisible(false);
+                    unitCost14.setVisible(false);
+                    unitCost15.setVisible(false);
+                    unitCost16.setVisible(false);
+                    break;
+                case "3":
+                    supplier3.setVisible(true);
+                    supplier4.setVisible(false);
+                    unitCost9.setVisible(true);
+                    unitCost10.setVisible(true);
+                    if(recipientsNumber.getValue().equals("3")) {
+                        unitCost11.setVisible(true);
+                    }
+                    if(recipientsNumber.getValue().equals("4")) {
+                        unitCost11.setVisible(true);
+                        unitCost12.setVisible(true);
+                    }
+                    unitCost13.setVisible(false);
+                    unitCost14.setVisible(false);
+                    unitCost15.setVisible(false);
+                    unitCost16.setVisible(false);
+                    break;
+                case "4":
+                    supplier3.setVisible(true);
+                    supplier4.setVisible(true);
+                    unitCost9.setVisible(true);
+                    unitCost10.setVisible(true);
+                    unitCost13.setVisible(true);
+                    unitCost14.setVisible(true);
+                    if(recipientsNumber.getValue().equals("3")) {
+                        unitCost11.setVisible(true);
+                        unitCost15.setVisible(true);
+                    }
+                    else if(recipientsNumber.getValue().equals("4")) {
+                        unitCost11.setVisible(true);
+                        unitCost12.setVisible(true);
+                        unitCost15.setVisible(true);
+                        unitCost16.setVisible(true);
+                    }
+                    break;
+            }
+        });
+
     }
 
     public void findSolutionAction() {
@@ -218,17 +321,16 @@ public class ViewController {
             System.out.println();
         }
 
-        TransportProblem transportProblem = new TransportProblem(unitDemand, unitSupply, unitCost);
-        printSolution(transportProblem,stepCounter++);
-        boolean isOptimal = transportProblem.isOptimal();
-        while (!isOptimal) {
-            try {
-                isOptimal = transportProblem.performNextStep();
-            } catch (CycleNotFoundException ex) {
-                solutionTextArea.appendText(ex.getMessage());
-                break;
-            }
+        try {
+            TransportProblem transportProblem = new TransportProblem(unitDemand, unitSupply, unitCost);
             printSolution(transportProblem, stepCounter++);
+            boolean isOptimal = transportProblem.isOptimal();
+            while (!isOptimal) {
+                isOptimal = transportProblem.performNextStep();
+                printSolution(transportProblem, stepCounter++);
+            }
+        }catch (UnsolvableException ex) {
+            solutionTextArea.appendText(ex.getMessage());
         }
     }
 
